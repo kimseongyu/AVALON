@@ -12,9 +12,9 @@ import ky from "ky-universal";
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/scenario/v1`;
 
 export const clientScenarioApi = {
-  create: async (): Promise<void> => {
+  create: async (): Promise<readProjectScenariosResponse> => {
     try {
-      await ky
+      const res = await ky
         .post(`${BASE_URL}/create`, {
           credentials: "include",
           retry: {
@@ -22,8 +22,11 @@ export const clientScenarioApi = {
           },
         })
         .json<SuccessResponse<readProjectScenariosResponse> | ErrorResponse>();
+
+      return handleApiResponse(res);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   createScenario: async (scenario: createScenarioRequest): Promise<void> => {

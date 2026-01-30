@@ -59,10 +59,37 @@ export const UploadBox = () => {
 
     const result = await createScenarios(uploadRequest);
     if (result.success) {
-      router.push(`/project/${project.id}/scenario/new`);
+      const createdScenarios = result.data?.scenarioList;
+      if (createdScenarios && createdScenarios.length > 0) {
+        router.push(
+          `/project/${project.id}/scenario/${createdScenarios[0].id}`
+        );
+      } else {
+        router.push(`/project/${project.id}/scenario/new`);
+      }
     } else {
       setError(ERROR_MESSAGES.FILE_UPLOAD.CREATION_ERROR);
     }
+  };
+
+  const handleLoadDemoFiles = () => {
+    const demoFiles = [
+      new File(["dummy content"], "요구사항 정의서.xlsx", {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      new File(["dummy content"], "인터페이스 정의서.xlsx", {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      new File(["dummy content"], "인터페이스 설계서.xlsx", {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      new File(["dummy content"], "테이블 설계서.xlsx", {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+    ];
+    setFiles(demoFiles);
+    setError(null);
+    resetStep();
   };
 
   const getButtonText = () => {
@@ -85,7 +112,15 @@ export const UploadBox = () => {
 
   return (
     <div className="bg-white shadow-lg rounded-xl p-8 w-[672px]">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">파일 첨부</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">파일 첨부</h1>
+        <button
+          onClick={handleLoadDemoFiles}
+          className="text-sm text-blue-500 hover:text-blue-700 underline"
+        >
+          데모용 파일 자동 첨부
+        </button>
+      </div>
       <FileInputBox onFileSelect={handleFileSelect} />
       {files.map((file, index) => (
         <FileListItem

@@ -14,7 +14,7 @@ type FileUploadCallbacks = {
 
 type UploadStep = {
   stepType: number;
-  apiCall: () => Promise<void | Scenario[]>;
+  apiCall: () => Promise<any>;
   nextStep: number;
   callback?: () => void;
 };
@@ -59,6 +59,7 @@ export const useFileUpload = (callbacks?: FileUploadCallbacks) => {
       const uploadSteps = createUploadSteps(files);
 
       let currentStep = step;
+      let lastResult: any = null;
 
       while (currentStep !== UPLOAD_STEPS.COMPLETE) {
         const currentStepData = uploadSteps.find(
@@ -69,7 +70,7 @@ export const useFileUpload = (callbacks?: FileUploadCallbacks) => {
           throw new Error(`Invalid step: ${currentStep}`);
         }
 
-        await currentStepData.apiCall();
+        lastResult = await currentStepData.apiCall();
 
         currentStep = currentStepData.nextStep;
         setStep(currentStep);
@@ -77,7 +78,7 @@ export const useFileUpload = (callbacks?: FileUploadCallbacks) => {
         currentStepData.callback?.();
       }
 
-      return { success: true };
+      return { success: true, data: lastResult };
     } catch (error) {
       handleApiError(error);
       return { success: false };
