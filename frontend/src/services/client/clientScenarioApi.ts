@@ -29,9 +29,11 @@ export const clientScenarioApi = {
       throw error;
     }
   },
-  createScenario: async (scenario: createScenarioRequest): Promise<void> => {
+  createScenario: async (
+    scenario: createScenarioRequest
+  ): Promise<createScenarioResponse> => {
     try {
-      await ky
+      const res = await ky
         .post(`${BASE_URL}`, {
           credentials: "include",
           json: scenario,
@@ -40,8 +42,11 @@ export const clientScenarioApi = {
           },
         })
         .json<SuccessResponse<createScenarioResponse> | ErrorResponse>();
+
+      return handleApiResponse(res);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   readScenario: async (scenarioId: string): Promise<readScenarioResponse> => {

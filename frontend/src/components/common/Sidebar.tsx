@@ -27,8 +27,11 @@ export const Sidebar = ({
 
   useEffect(() => {
     if (project.scenarios.length > 0 && project.id === projectId) {
-      readScenarioTestcases(scenarioId);
-      addOpenScenario(scenarioId);
+      const scenarioExists = project.scenarios.some((s) => s.id === scenarioId);
+      if (scenarioExists || scenarioId === "new") {
+        readScenarioTestcases(scenarioId);
+        addOpenScenario(scenarioId);
+      }
     }
   }, [projectId, scenarioId, project.scenarios.length, project.id]);
 

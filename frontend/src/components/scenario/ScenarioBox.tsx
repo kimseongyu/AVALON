@@ -28,9 +28,9 @@ export const ScenarioBox = ({
     handleDelete,
   } = useScenario(projectId, scenarioId);
 
-  const onCreateSuccess = () => {
+  const onCreateSuccess = (newScenarioId: string) => {
     alert(INFO_MESSAGES.SCENARIO.CREATE_INFO);
-    router.push(`/project/${projectId}/scenario/new`);
+    router.push(`/project/${projectId}/scenario/${newScenarioId}`);
   };
 
   const onUpdateSuccess = () => {

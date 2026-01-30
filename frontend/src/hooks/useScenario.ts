@@ -6,7 +6,11 @@ import { ScenarioInfo } from "@/interfaces/scenario";
 import { validateId } from "@/utils/validateId";
 
 export const useScenario = (projectId: string, scenarioId: string) => {
-  const { updateScenario, deleteScenario: removeScenario } = useProjectStore();
+  const {
+    addScenario,
+    updateScenario,
+    deleteScenario: removeScenario,
+  } = useProjectStore();
 
   const [scenarioInfo, setScenarioInfo] = useState<ScenarioInfo>({
     id: scenarioId,
@@ -44,6 +48,8 @@ export const useScenario = (projectId: string, scenarioId: string) => {
         }
       };
       fetchScenarioInfo();
+    } else {
+      resetScenario();
     }
   }, [scenarioId]);
 
@@ -59,17 +65,35 @@ export const useScenario = (projectId: string, scenarioId: string) => {
     setScenarioInfo((prev) => ({ ...prev, validation: value }));
   };
 
-  const handleCreate = async (onSuccess?: () => void) => {
+  const handleCreate = async (onSuccess?: (id: string) => void) => {
+    if (!scenarioInfo.name.trim()) {
+      alert("시나리오 제목을 입력해주세요.");
+      return;
+    }
+    if (!scenarioInfo.description.trim()) {
+      alert("상세설명을 입력해주세요.");
+      return;
+    }
+    if (!scenarioInfo.validation.trim()) {
+      alert("검증포인트를 입력해주세요.");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      await clientScenarioApi.createScenario({
+      const result = await clientScenarioApi.createScenario({
         name: scenarioInfo.name,
         description: scenarioInfo.description,
         validation: scenarioInfo.validation,
       });
+      addScenario({
+        id: result.id,
+        name: scenarioInfo.name,
+        testcases: [],
+      });
       setSuccess(SUCCESS_MESSAGES.SCENARIO.CREATE_SUCCESS);
       resetScenario();
-      onSuccess?.();
+      onSuccess?.(result.id);
     } catch (error) {
       console.error(error);
       setError(ERROR_MESSAGES.SCENARIO.CREATE_FAILED);
@@ -79,6 +103,21 @@ export const useScenario = (projectId: string, scenarioId: string) => {
   };
 
   const handleUpdate = async (onSuccess?: () => void) => {
+    if (scenarioId === "new") return;
+
+    if (!scenarioInfo.name.trim()) {
+      alert("시나리오 제목을 입력해주세요.");
+      return;
+    }
+    if (!scenarioInfo.description.trim()) {
+      alert("상세설명을 입력해주세요.");
+      return;
+    }
+    if (!scenarioInfo.validation.trim()) {
+      alert("검증포인트를 입력해주세요.");
+      return;
+    }
+
     try {
       setIsLoading(true);
       await clientScenarioApi.updateScenario(scenarioInfo.id, {
@@ -104,15 +143,21 @@ export const useScenario = (projectId: string, scenarioId: string) => {
   const handleDelete = async (
     onSuccess?: (scenarioId: string | null, total: number) => void
   ) => {
+    if (scenarioId === "new") return;
+
     try {
       setIsLoading(true);
+      const currentScenarios = useProjectStore.getState().project.scenarios;
+      const nextScenarios = currentScenarios.filter(
+        (s) => s.id !== scenarioInfo.id
+      );
+
       await clientScenarioApi.deleteScenario(scenarioInfo.id);
       removeScenario(scenarioInfo.id);
       setSuccess(SUCCESS_MESSAGES.SCENARIO.DELETE_SUCCESS);
-      const scenariosAfterDeletion =
-        useProjectStore.getState().project.scenarios;
-      const total = scenariosAfterDeletion.length;
-      onSuccess?.(total > 0 ? scenariosAfterDeletion[0].id : null, total);
+
+      const nextId = nextScenarios.length > 0 ? nextScenarios[0].id : null;
+      onSuccess?.(nextId, nextScenarios.length);
     } catch (error) {
       console.error(error);
       setError(ERROR_MESSAGES.SCENARIO.DELETE_FAILED);

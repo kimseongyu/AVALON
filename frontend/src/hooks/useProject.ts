@@ -28,7 +28,7 @@ export const useProject = () => {
   };
 
   const readScenarioTestcases = async (scenarioId: string) => {
-    if (isLoading) return false;
+    if (isLoading || scenarioId === "new") return false;
 
     setIsLoading(true);
     try {
