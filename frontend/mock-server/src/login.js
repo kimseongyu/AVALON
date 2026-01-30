@@ -33,9 +33,10 @@ export const setupLoginRoutes = (server, router) => {
         .assign({ avalon: avalon })
         .write();
 
-      // 기존 프로젝트 ID 반환
+      // 기존 프로젝트 ID 반환 (SuccessResponse 형식)
       return res.json({
-        projectId: existingProject.projectId,
+        data: null,
+        status: "success",
         message: "Existing project found",
       });
     } else {
@@ -51,7 +52,8 @@ export const setupLoginRoutes = (server, router) => {
       db.get("projects").push(newProject).write();
 
       return res.json({
-        projectId: projectId,
+        data: null,
+        status: "success",
         message: "New project created",
       });
     }
@@ -82,6 +84,8 @@ export const setupLoginRoutes = (server, router) => {
     }
 
     return res.status(200).json({
+      data: null,
+      status: "success",
       message: "Logged out successfully",
     });
   });
@@ -106,8 +110,9 @@ export const setupLoginRoutes = (server, router) => {
     res.set("requestTime", getCurrentTime());
 
     return res.status(200).json({
+      data: null,
+      status: "success",
       message: "Project deleted successfully",
-      projectId: projectId,
     });
   });
 };

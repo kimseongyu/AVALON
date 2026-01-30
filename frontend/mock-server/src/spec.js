@@ -105,9 +105,14 @@ export const setupSpecRoutes = (server, router) => {
     // 응답 헤더 설정
     res.set("requestTime", currentTime);
 
-    res.json({
-      message: "Files uploaded successfully",
-    });
+    // 1초 지연
+    setTimeout(() => {
+      res.json({
+        data: null,
+        status: "success",
+        message: "Files uploaded successfully",
+      });
+    }, 1000);
   });
 
   server.post("/api/spec/v1/analyze", (req, res) => {
@@ -131,8 +136,13 @@ export const setupSpecRoutes = (server, router) => {
     // 응답 헤더 설정
     res.set("requestTime", currentTime);
 
-    res.json({
-      message: "Files analyzed successfully",
-    });
+    // 1초 지연
+    setTimeout(() => {
+      res.json({
+        data: null,
+        status: "success",
+        message: "Files analyzed successfully",
+      });
+    }, 1000);
   });
 };

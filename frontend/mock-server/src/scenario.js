@@ -53,13 +53,20 @@ export const setupScenarioRoutes = (server, router) => {
       .assign({ scenarioList })
       .write();
 
-    res.json({
-      scenarioList: scenarioList.map((s) => ({
-        id: s.id,
-        name: s.name,
-      })),
-      total: scenarioList.length,
-    });
+    // 1초 지연
+    setTimeout(() => {
+      res.json({
+        data: {
+          scenarioList: scenarioList.map((s) => ({
+            id: s.id,
+            name: s.name,
+          })),
+          total: scenarioList.length,
+        },
+        status: "success",
+        message: "OK",
+      });
+    }, 1000);
   });
 
   // Add a single scenario
@@ -108,7 +115,9 @@ export const setupScenarioRoutes = (server, router) => {
       .write();
 
     res.json({
-      id: newScenario.id,
+      data: { id: newScenario.id },
+      status: "success",
+      message: "OK",
     });
   });
 
@@ -161,7 +170,11 @@ export const setupScenarioRoutes = (server, router) => {
       .assign({ scenarioList: updatedScenarioList })
       .write();
 
-    res.json({ message: "Scenario updated successfully" });
+    res.json({
+      data: null,
+      status: "success",
+      message: "Scenario updated successfully",
+    });
   });
 
   // Delete a scenario
@@ -183,11 +196,19 @@ export const setupScenarioRoutes = (server, router) => {
     }
 
     // 시나리오 삭제
-    const updatedScenarioList = project.scenarioList.filter((s) => s.id !== id);
+    const scenarioIndex = project.scenarioList.findIndex((s) => s.id === id);
 
-    if (updatedScenarioList.length === project.scenarioList.length) {
-      return res.status(404).json({ error: "Scenario not found" });
+    if (scenarioIndex === -1) {
+      // 이미 삭제되었거나 존재하지 않는 경우에도 성공으로 처리 (멱등성 보장)
+      return res.status(200).json({
+        data: null,
+        status: "success",
+        message: "Scenario already deleted or not found",
+      });
     }
+
+    const updatedScenarioList = [...project.scenarioList];
+    updatedScenarioList.splice(scenarioIndex, 1);
 
     // DB 업데이트
     db.get("projects")
@@ -195,7 +216,11 @@ export const setupScenarioRoutes = (server, router) => {
       .assign({ scenarioList: updatedScenarioList })
       .write();
 
-    res.json({ message: "Scenario deleted successfully" });
+    res.json({
+      data: null,
+      status: "success",
+      message: "Scenario deleted successfully",
+    });
   });
 
   // Get a single scenario
@@ -224,11 +249,15 @@ export const setupScenarioRoutes = (server, router) => {
     }
 
     res.json({
-      id: scenario.id,
-      name: scenario.name,
-      graph: scenario.graph,
-      description: scenario.description,
-      validation: scenario.validation,
+      data: {
+        id: scenario.id,
+        name: scenario.name,
+        graph: scenario.graph,
+        description: scenario.description,
+        validation: scenario.validation,
+      },
+      status: "success",
+      message: "OK",
     });
   });
 
@@ -256,11 +285,15 @@ export const setupScenarioRoutes = (server, router) => {
     );
 
     res.json({
-      scenarioList: scenarioList.map((s) => ({
-        id: s.id,
-        name: s.name,
-      })),
-      total: scenarioList.length,
+      data: {
+        scenarioList: scenarioList.map((s) => ({
+          id: s.id,
+          name: s.name,
+        })),
+        total: scenarioList.length,
+      },
+      status: "success",
+      message: "OK",
     });
   });
 };

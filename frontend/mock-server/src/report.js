@@ -1,48 +1,56 @@
 import { getCurrentTime } from "./utils.js";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const setupReportRoutes = (server, router) => {
+  // 에러 응답 유틸리티
+  const sendError = (res, status, message) => {
+    if (!res.headersSent) {
+      res.status(status).json({
+        status: status,
+        divisionCode: "ERR_REPORT",
+        resultMsg: message,
+        errors: [],
+        reason: message,
+      });
+    }
+  };
+
   // 테스트시나리오 리포트 다운로드
   server.get("/api/report/v1/scenario", async (req, res) => {
     const avalon = req.cookies?.avalon;
 
     if (!avalon) {
-      return res.status(401).json({ error: "Authentication required" });
+      return sendError(res, 401, "Authentication required");
     }
 
     const db = router.db;
     const project = db.get("projects").find({ avalon: avalon }).value();
 
     if (!project) {
-      return res.status(404).json({ error: "Project not found" });
+      return sendError(res, 404, "Project not found");
     }
 
-    try {
-      const currentTime = getCurrentTime();
-      const reportPath = path.join(
-        process.cwd(),
-        "reports",
-        "시나리오 리포트.csv",
-      );
+    const currentTime = getCurrentTime();
+    const reportPath = path.join(
+      __dirname,
+      "..",
+      "reports",
+      "시나리오 리포트.csv",
+    );
+    const filename = `test-scenario-report-${currentTime}.csv`;
 
-      // 파일을 버퍼로 읽어오기
-      const fileBuffer = await fs.promises.readFile(reportPath);
-
-      // 응답 헤더 설정
-      res.set({
-        "Content-Type": "application/octet-stream",
-        "Content-Disposition": `attachment; filename="test-scenario-report-${currentTime}.csv"`,
-        "Content-Length": fileBuffer.length,
-        requestTime: currentTime,
-      });
-
-      // 버퍼를 blob으로 전송
-      res.send(fileBuffer);
-    } catch (err) {
-      console.error("File read error:", err);
-      res.status(500).json({ error: "Failed to read report file" });
-    }
+    // 파일 다운로드 처리 (Content-Disposition 헤더 자동 설정)
+    res.download(reportPath, filename, (err) => {
+      if (err) {
+        console.error("File download error:", err);
+        sendError(res, 500, "Failed to download report file");
+      }
+    });
   });
 
   // 테스트케이스 리포트 다운로드
@@ -51,46 +59,37 @@ export const setupReportRoutes = (server, router) => {
     const { scenarioId } = req.params;
 
     if (!avalon) {
-      return res.status(401).json({ error: "Authentication required" });
+      return sendError(res, 401, "Authentication required");
     }
 
     const db = router.db;
     const project = db.get("projects").find({ avalon: avalon }).value();
 
     if (!project) {
-      return res.status(404).json({ error: "Project not found" });
+      return sendError(res, 404, "Project not found");
     }
 
     const scenario = project.scenarioList.find((s) => s.id === scenarioId);
 
     if (!scenario) {
-      return res.status(404).json({ error: "Scenario not found" });
+      return sendError(res, 404, "Scenario not found");
     }
 
-    try {
-      const currentTime = getCurrentTime();
-      const reportPath = path.join(
-        process.cwd(),
-        "reports",
-        "테스트케이스 리포트.csv",
-      );
+    const currentTime = getCurrentTime();
+    const reportPath = path.join(
+      __dirname,
+      "..",
+      "reports",
+      "테스트케이스 리포트.csv",
+    );
+    const filename = `test-case-report-${scenarioId}-${currentTime}.csv`;
 
-      // 파일을 버퍼로 읽어오기
-      const fileBuffer = await fs.promises.readFile(reportPath);
-
-      // 응답 헤더 설정
-      res.set({
-        "Content-Type": "application/octet-stream",
-        "Content-Disposition": `attachment; filename="test-case-report-${scenarioId}-${currentTime}.csv"`,
-        "Content-Length": fileBuffer.length,
-        requestTime: currentTime,
-      });
-
-      // 버퍼를 blob으로 전송
-      res.send(fileBuffer);
-    } catch (err) {
-      console.error("File read error:", err);
-      res.status(500).json({ error: "Failed to read report file" });
-    }
+    // 파일 다운로드 처리 (Content-Disposition 헤더 자동 설정)
+    res.download(reportPath, filename, (err) => {
+      if (err) {
+        console.error("File download error:", err);
+        sendError(res, 500, "Failed to download report file");
+      }
+    });
   });
 };

@@ -32,7 +32,7 @@ export const setupApiTestRoutes = (server, router) => {
     }
 
     let targetScenarios = project.scenarioList.filter((s) =>
-      parsedScenarioList.includes(s.id),
+      parsedScenarioList.includes(s.id)
     );
 
     // 각 시나리오에 대해 테스트 결과 설정
@@ -82,7 +82,7 @@ export const setupApiTestRoutes = (server, router) => {
       ...project,
       scenarioList: project.scenarioList.map((scenario) => {
         const updatedScenario = updatedScenarios.find(
-          (s) => s.id === scenario.id,
+          (s) => s.id === scenario.id
         );
         return updatedScenario || scenario;
       }),
@@ -90,7 +90,11 @@ export const setupApiTestRoutes = (server, router) => {
 
     db.get("projects").find({ avalon: avalon }).assign(updatedProject).write();
 
-    res.json({ message: "API test execution completed" });
+    res.json({
+      data: null,
+      status: "success",
+      message: "API test execution completed",
+    });
   });
 
   // 시나리오별 테스트 결과 조회
@@ -110,13 +114,13 @@ export const setupApiTestRoutes = (server, router) => {
     }
 
     let scenarioList = project.scenarioList.filter(
-      (scenario) => "isSuccess" in scenario,
+      (scenario) => "isSuccess" in scenario
     );
 
     // cursor 기반 페이지네이션 (cursor가 있을 때만)
     if (cursor) {
       const cursorIndex = scenarioList.findIndex(
-        (scenario) => scenario.id === cursor,
+        (scenario) => scenario.id === cursor
       );
       if (cursorIndex !== -1) {
         scenarioList = scenarioList.slice(cursorIndex + 1);
@@ -131,8 +135,8 @@ export const setupApiTestRoutes = (server, router) => {
       }
     }
 
-    // 응답 데이터 구성
-    const response = {
+    // 응답 데이터 구성 (SuccessResponse)
+    const data = {
       scenarioList: scenarioList.map((scenario) => ({
         scenarioId: scenario.id,
         scenarioName: scenario.name,
@@ -140,7 +144,11 @@ export const setupApiTestRoutes = (server, router) => {
       })),
     };
 
-    res.json(response);
+    res.json({
+      data,
+      status: "success",
+      message: "OK",
+    });
   });
 
   // 테스트케이스 별 테스트 결과 조회
@@ -189,8 +197,8 @@ export const setupApiTestRoutes = (server, router) => {
       }
     }
 
-    // 응답 데이터 구성
-    const response = {
+    // 응답 데이터 구성 (SuccessResponse)
+    const data = {
       scenarioId: scenario.id,
       scenarioName: scenario.name,
       tcList: tcList.map((tc) => ({
@@ -202,6 +210,10 @@ export const setupApiTestRoutes = (server, router) => {
       })),
     };
 
-    res.json(response);
+    res.json({
+      data,
+      status: "success",
+      message: "OK",
+    });
   });
 };
