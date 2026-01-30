@@ -6,21 +6,13 @@ const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/report/v1`;
 
 export const clientReportApi = {
   readScenarioReport: async (): Promise<Response> => {
-    const res = await ky
-      .get(`${BASE_URL}/scenario`, {
-        credentials: "include",
-      })
-      .json<SuccessResponse<Response> | ErrorResponse>();
-
-    return handleApiResponse(res);
+    return await ky.get(`${BASE_URL}/scenario`, {
+      credentials: "include",
+    });
   },
   readTestcaseReport: async (scenarioId: string): Promise<Response> => {
-    const res = await ky
-      .get(`${BASE_URL}/testcase/${scenarioId}`, {
-        credentials: "include",
-      })
-      .json<SuccessResponse<Response> | ErrorResponse>();
-
-    return handleApiResponse(res);
+    return await ky.get(`${BASE_URL}/testcase/${scenarioId}`, {
+      credentials: "include",
+    });
   },
 };
