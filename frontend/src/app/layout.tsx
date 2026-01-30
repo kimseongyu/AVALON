@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { MSWComponent } from "@/mocks/MSWComponent";
 
 export const metadata: Metadata = {
   title: "AVALON",
@@ -13,7 +14,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <MSWComponent />
+        {children}
+      </body>
     </html>
   );
 };
