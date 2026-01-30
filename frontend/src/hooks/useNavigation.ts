@@ -1,4 +1,4 @@
-import { useParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useState } from "react";
 import { clientAuthApi } from "@/services/client/clientAuthApi";
 import { clientTestcaseApi } from "@/services/client/clientTestcaseApi";
@@ -31,7 +31,9 @@ type NavigationCallbacks = {
 };
 
 export const useNavigation = (callbacks?: NavigationCallbacks) => {
-  const { "project-id": projectId, "scenario-id": scenarioId } = useParams();
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get("projectId") || "";
+  const scenarioId = searchParams.get("scenarioId") || "";
   const pathname = usePathname();
   const { project, resetProject, resetAllScenarios } = useProjectStore();
   const { resetSidebar } = useSidebarStore();
@@ -102,7 +104,7 @@ export const useNavigation = (callbacks?: NavigationCallbacks) => {
       },
       backToScenario: {
         type: "link" as const,
-        href: `/project/${projectId}/scenario/${
+        href: `/project/scenario?projectId=${projectId}&scenarioId=${
           project.scenarios[0]?.id || ""
         }`,
         color: "bg-gray-500 hover:bg-gray-600",
@@ -117,13 +119,13 @@ export const useNavigation = (callbacks?: NavigationCallbacks) => {
       },
     };
 
-    if (pathname.includes("/scenario/")) {
+    if (pathname.includes("/scenario")) {
       return [
         commonButtons.logout,
         commonButtons.refresh,
         {
           type: "link" as const,
-          href: `/project/${projectId}/upload`,
+          href: `/project/upload?projectId=${projectId}`,
           color: "bg-violet-500 hover:bg-violet-600",
           text: "파일 첨부",
         },
@@ -151,7 +153,7 @@ export const useNavigation = (callbacks?: NavigationCallbacks) => {
       return [commonButtons.logout];
     }
 
-    if (pathname.includes("/test-run/")) {
+    if (pathname.includes("/test-run")) {
       return [commonButtons.logout, commonButtons.backToScenario];
     }
 

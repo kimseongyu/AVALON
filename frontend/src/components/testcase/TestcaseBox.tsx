@@ -36,12 +36,14 @@ export const TestcaseBox = ({
 
   const onCreateSuccess = (tcId: string) => {
     router.push(
-      `/project/${projectId}/scenario/${scenarioId}/testcase/${tcId}`
+      `/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}&testcaseId=${tcId}`
     );
   };
 
   const onDeleteSuccess = () => {
-    router.push(`/project/${projectId}/scenario/${scenarioId}`);
+    router.push(
+      `/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}`
+    );
   };
 
   return (
@@ -86,14 +88,14 @@ export const TestcaseBox = ({
               ) : (
                 <>
                   <LinkButton
-                    href={`/project/${projectId}/scenario/new`}
+                    href={`/project/scenario?projectId=${projectId}&scenarioId=new`}
                     color="bg-transparent text-slate-700 hover:text-orange-500"
                     ariaLabel="시나리오 추가"
                   >
                     시나리오 추가
                   </LinkButton>
                   <LinkButton
-                    href={`/project/${projectId}/scenario/${scenarioId}/testcase/new`}
+                    href={`/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}&testcaseId=new`}
                     color="bg-transparent text-slate-700 hover:text-orange-500"
                     ariaLabel="TC 추가"
                   >

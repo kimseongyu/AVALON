@@ -21,9 +21,9 @@ export const LoginProjectBox = () => {
 
   const onLoginSuccess = (scenarioId: string | null, total: number) => {
     if (total > 0) {
-      router.push(`/project/${projectId}/scenario/${scenarioId}`);
+      router.push(`/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}`);
     } else {
-      router.push(`/project/${projectId}/upload`);
+      router.push(`/project/upload?projectId=${projectId}`);
     }
   };
 

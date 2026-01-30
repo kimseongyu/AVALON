@@ -11,6 +11,10 @@ export const MSWComponent = () => {
         const { worker } = await import("./browser");
         await worker.start({
           onUnhandledRequest: "bypass", // 처리되지 않은 요청은 통과
+          serviceWorker: {
+            url:
+              process.env.NEXT_PUBLIC_MSW_WORKER_URL || "/mockServiceWorker.js",
+          },
         });
       };
       initMsw();

@@ -14,10 +14,14 @@ export const Navigation = () => {
     },
     onGenerateTestcasesSuccess: () => {
       alert(INFO_MESSAGES.TESTCASE.CREATE_INFO);
-      router.push(`/project/${projectId}/scenario/${scenarioId}`);
+      router.push(
+        `/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}`
+      );
     },
     onRunApiTestSuccess: (scenarioId: string) => {
-      router.push(`/project/${projectId}/test-run/${scenarioId}`);
+      router.push(
+        `/project/test-run?projectId=${projectId}&scenarioId=${scenarioId}`
+      );
     },
   });
 

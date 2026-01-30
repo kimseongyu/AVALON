@@ -62,10 +62,10 @@ export const UploadBox = () => {
       const createdScenarios = result.data?.scenarioList;
       if (createdScenarios && createdScenarios.length > 0) {
         router.push(
-          `/project/${project.id}/scenario/${createdScenarios[0].id}`
+          `/project/scenario?projectId=${project.id}&scenarioId=${createdScenarios[0].id}`
         );
       } else {
-        router.push(`/project/${project.id}/scenario/new`);
+        router.push(`/project/scenario?projectId=${project.id}&scenarioId=new`);
       }
     } else {
       setError(ERROR_MESSAGES.FILE_UPLOAD.CREATION_ERROR);

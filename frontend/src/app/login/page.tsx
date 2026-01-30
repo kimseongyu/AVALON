@@ -12,6 +12,15 @@ const LoginPage = () => {
         AVALON
       </h1>
       <LoginProjectBox />
+      <footer className="mt-12 text-gray-400 text-xs text-center leading-relaxed">
+        <p>
+          데모를 위해 Static Export을 하며 파일 경로 기반 라우팅을 쿼리 파라미터
+          방식으로 변경하였고
+        </p>
+        <p>
+          MSW(Mock Service Worker)를 활용하여 가상 서버 환경을 구축하였습니다.
+        </p>
+      </footer>
     </div>
   );
 };

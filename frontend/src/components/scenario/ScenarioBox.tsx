@@ -30,7 +30,9 @@ export const ScenarioBox = ({
 
   const onCreateSuccess = (newScenarioId: string) => {
     alert(INFO_MESSAGES.SCENARIO.CREATE_INFO);
-    router.push(`/project/${projectId}/scenario/${newScenarioId}`);
+    router.push(
+      `/project/scenario?projectId=${projectId}&scenarioId=${newScenarioId}`
+    );
   };
 
   const onUpdateSuccess = () => {
@@ -39,9 +41,11 @@ export const ScenarioBox = ({
 
   const onDeleteSuccess = (scenarioId: string | null, total: number) => {
     if (total === 0) {
-      router.push(`/project/${projectId}/upload`);
+      router.push(`/project/upload?projectId=${projectId}`);
     } else {
-      router.push(`/project/${projectId}/scenario/${scenarioId}`);
+      router.push(
+        `/project/scenario?projectId=${projectId}&scenarioId=${scenarioId}`
+      );
     }
   };
 
@@ -78,14 +82,14 @@ export const ScenarioBox = ({
               ) : (
                 <>
                   <LinkButton
-                    href={`/project/${projectId}/scenario/new`}
+                    href={`/project/scenario?projectId=${projectId}&scenarioId=new`}
                     color="bg-transparent text-slate-700 hover:text-orange-500"
                     ariaLabel="시나리오 추가"
                   >
                     시나리오 추가
                   </LinkButton>
                   <LinkButton
-                    href={`/project/${projectId}/scenario/${scenarioId}/testcase/new`}
+                    href={`/project/scenario/testcase?projectId=${projectId}&scenarioId=${scenarioId}&testcaseId=new`}
                     color="bg-transparent text-slate-700 hover:text-orange-500"
                     ariaLabel="TC 추가"
                   >

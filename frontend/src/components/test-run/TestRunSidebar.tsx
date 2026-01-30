@@ -51,7 +51,7 @@ export const TestRunSidebar = ({ projectId }: { projectId: string }) => {
           return (
             <Link
               key={s.scenarioId}
-              href={`/project/${projectId}/test-run/${s.scenarioId}`}
+              href={`/project/test-run?projectId=${projectId}&scenarioId=${s.scenarioId}`}
             >
               <div className="mb-8 flex items-center justify-between hover:bg-slate-100 p-2 rounded transition-colors">
                 <div className="font-bold text-slate-800">{s.scenarioName}</div>
