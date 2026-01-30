@@ -11,8 +11,8 @@
   "dependencies": {
     "ky": "^1.8.1",
     "ky-universal": "^0.12.0",
-    "mermaid": "^11.7.0",
-    "next": "^15.3.3",
+    "mermaid": "^10.9.5",
+    "next": "^16.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
